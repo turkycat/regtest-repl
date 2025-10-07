@@ -4,7 +4,7 @@ import { ONE_SECOND } from './constants'
 const CONTAINER_NAME = 'regtest-repl-fulcrum'
 
 function log(message: string, ...args: any): void {
-  console.log('[TEST][CONTAINER]', message, ...args)
+  console.log('[CONTAINER]', message, ...args)
 }
 
 function execCommand(command: string): Promise<void> {

@@ -3,19 +3,14 @@ import { generateKey, getAddress, getMsAddress, keysToDescriptor, keyToDescripto
 import { BITCOIN_RPC_ERROR_CODE, ONE_SECOND } from './util/constants'
 import { ensureDockerStack } from './util/container'
 import readline from 'readline'
+import { enumerateCommands } from './commands'
+import { log, logSeparator } from './logger'
 
 const DEFAULT_WALLET_MNEMONIC1 = 'ghost ghost ghost ghost ghost ghost ghost ghost ghost ghost ghost machine'
 const DEFAULT_WALLET_MNEMONIC2 = 'keen keen keen keen keen keen keen keen keen keen keen join'
 const DEFAULT_WALLET_MNEMONIC3 = 'coffee coffee coffee coffee coffee coffee coffee coffee coffee coffee coffee blast'
 
 const client = new RegtestClient()
-
-function log(message: string, ...args: any): void {
-  console.log('[REPL]', message, ...args)
-}
-function logSeparator(): void {
-  log('-------------------------------------------------------')
-}
 
 async function simulateBlock(address: string, numTransactions?: number): Promise<void> {
   const transactions = numTransactions ?? Math.floor(Math.random() * 10)
@@ -72,6 +67,8 @@ async function main() {
   log('estimated fee:', feeRate)
   log('network initialization finished')
   logSeparator()
+
+  /*
 
   // create a couple wallets
   log('creating a couple wallets for convenience...')
@@ -134,6 +131,7 @@ async function main() {
   log(ssuPrv)
   const ssuAddress = await getAddress(ssuKey, '0/0')
   log('unfunded wallet address', ssuAddress)
+
   logSeparator()
   logSeparator()
   log('                  ~~ NETWORK READY ~~')
@@ -143,18 +141,52 @@ async function main() {
   // simulate network activity
   log('starting network activity simulation...')
   logSeparator()
+
+  */
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   })
 
-  while (true) {
-    await new Promise<string>((resolve) => {
-      rl.question('Press enter to mine a block', resolve)
-    })
-    await simulateBlock(sinkAddress)
-    logSeparator()
+  log('🪄 🧙‍♂️ Welcome to the REPL 🧙‍♂️ 🪄')
+  log('The network is now ready to use.')
+  log('Try some commands: mineblock, help, exit')
+
+  const program = await enumerateCommands()
+  async function executeCommand(input: string): Promise<void> {
+    const args = input.trim().split(' ')
+
+    if (!args[0]) return
+
+    try {
+      // Parse and execute the command
+      await program.parseAsync(args, { from: 'user' })
+    } catch (error: any) {
+      // Handle commander errors gracefully
+      if (error.code === 'commander.help') {
+        // Help was displayed, do nothing
+        return
+      } else if (error.code === 'commander.unknownCommand') {
+        log(`❌ Unknown command: ${args[0]}`)
+        log('Type "help" to see available commands')
+      } else if (error.code === 'commander.missingArgument') {
+        log(`❌ Missing required argument: ${error.message}`)
+      } else {
+        log(`❌ Error: ${error.message}`)
+      }
+    }
   }
+
+  while (true) {
+    const command = await new Promise<string>((resolve) => {
+      rl.question('> ', resolve)
+    })
+
+    await executeCommand(command)
+  }
+
+  log('exiting...')
+  rl.close()
 }
 
 main()

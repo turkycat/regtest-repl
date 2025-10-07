@@ -14,7 +14,7 @@ const defaultClientParameters = {
 const defaultWallet = 'regtest-repl-wallet'
 
 const log = (message: string, ...args: any[]): void => {
-  console.log('[TEST][REGTEST_CLIENT]', message, ...args)
+  console.log('[REGTEST_CLIENT]', message, ...args)
 }
 
 export enum DescriptorType {
@@ -170,10 +170,11 @@ export default class RegtestClient extends Client {
     const clientWalletAddress = await this.getNewAddress({
       address_type: 'bech32',
     })
-    await this.generateToAddress({
+    const ret = await this.generateToAddress({
       nblocks,
       address: clientWalletAddress,
     })
+    log(`mined ${nblocks} blocks`, ret)
     await new Promise((resolve) => setTimeout(resolve, 3000))
   }
 }
