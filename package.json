@@ -1,0 +1,33 @@
+{
+  "name": "regtest-repl",
+  "version": "0.1.0",
+  "description": "",
+  "main": "repl.ts",
+  "scripts": {
+    "test": "vitest",
+    "build": "tsc",
+    "repl": "tsx src/repl.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/node": "^22.17.0",
+    "bip32": "^4.0.0",
+    "bip39": "^3.1.0",
+    "bitcoin-core": "^4.2.0",
+    "bitcoinjs-lib": "^6.1.7",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "tiny-secp256k1": "^2.2.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0",
+    "unzip-stream": "^0.3.4",
+    "vite": "^5.4.19",
+    "vitest": "^2.1.9"
+  },
+  "packageManager": "pnpm@10.18.1"
+}
